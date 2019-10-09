@@ -111,8 +111,7 @@ func query(ctx *fasthttp.RequestCtx) {
 					tmpVal := row.Get(hv).String()
 					if tmpVal == "" {
 						tmpVal = `""`
-					}
-					if maxLen := viper.GetInt("maxStringLenght"); maxLen > 0 {
+					} else if maxLen := viper.GetInt("maxStringLenght"); maxLen > 0 && len(tmpVal) > maxLen {
 						tmpVal = tmpVal[:maxLen]
 					}
 					fmt.Fprint(ctx, tmpVal)
