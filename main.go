@@ -112,7 +112,7 @@ func query(ctx *fasthttp.RequestCtx) {
 					if tmpVal == "" {
 						tmpVal = `""`
 					} else if maxLen := viper.GetInt("maxStringLenght"); maxLen > 0 && len(tmpVal) > maxLen {
-						tmpVal = tmpVal[:maxLen]
+						tmpVal = tmpVal[:maxLen-1] + `"`
 					}
 					fmt.Fprint(ctx, tmpVal)
 					/*} else {
