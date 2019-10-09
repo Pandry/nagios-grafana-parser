@@ -2,7 +2,8 @@ logFile: "stdout"
 port: 8080
 autoreload: true
 querystring: "query=servicelist&details=true&hoststatus=down&servicestatus=warning+critical+unknown"
-maxStringLenght: 150
+maxStringLength: 200
+avoidAcknowledged: true
 tableHeaders:
   - host_name
   - description
