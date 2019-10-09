@@ -1,7 +1,8 @@
 logFile: "stdout"
 port: 8080
+autoreload: true
 querystring: "query=servicelist&details=true&hoststatus=down&servicestatus=warning+critical+unknown"
-tableHeaders: 
+tableHeaders:
   - host_name
   - description
   - plugin_output
