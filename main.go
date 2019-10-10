@@ -20,6 +20,9 @@ const (
 	nagiosAPIEndpoint = `cgi-bin/statusjson.cgi?`
 )
 
+//TODO:
+//Convert to string the error? https://sourceforge.net/p/nagios/mailman/nagios-users/?limit=250&style=flat&viewmonth=200701&page=0
+
 var (
 	tstypes = []string{"last_update", "last_check", "last_state_change", "last_hard_state_change", "last_time_ok", "last_time_warning", "last_time_unknown", "last_time_critical", "last_notification", "next_notification", "next_check"}
 	//jsonCols = []string{"host_name", "description", "plugin_output", "long_plugin_output", "perf_data", "max_attempts", "current_attempt", "status", "last_update", "has_been_checked", "should_be_scheduled", "last_check", "check_options", "check_type", "checks_enabled", "last_state_change", "last_hard_state_change", "last_hard_state", "last_time_ok", "last_time_warning", "last_time_unknown", "last_time_critical", "state_type", "last_notification", "next_notification", "next_check", "no_more_notifications", "notifications_enabled", "problem_has_been_acknowledged", "acknowledgement_type", "current_notification_number", "accept_passive_checks", "event_handler_enabled", "flap_detection_enabled", "is_flapping", "percent_state_change", "latency", "execution_time", "scheduled_downtime_depth", "process_performance_data", "obsess"}
@@ -96,6 +99,9 @@ func query(ctx *fasthttp.RequestCtx) {
 				}*/
 			obj, _ := vv.Object()
 			obj.Visit(func(key []byte, row *fastjson.Value) {
+				if row.GetBool("no_more_notifications") || (viper.GetBool("instances."+instance+".hideAcknowledged") || viper.GetBool("hideAcknowledged")) && row.GetBool("problem_has_been_acknowledged") {
+					return
+				}
 				if !first {
 					fmt.Fprint(ctx, `,`)
 				} else {
