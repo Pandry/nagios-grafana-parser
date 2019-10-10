@@ -161,8 +161,6 @@ func webApp(ctx *fasthttp.RequestCtx) {
 }
 
 func main() {
-	user := "admin"
-	pass := "admin"
 
 	pflag.Int("port", 8080, "Webserver listening port number")
 	pflag.Parse()
@@ -240,10 +238,10 @@ func main() {
 	router.GET("/api/query", query)
 	router.POST("/api/query", query)
 	router.GET("/api/annotations", annotation)
-	router.GET("/js/", BasicAuth(fasthttp.FSHandler("./static/js/", 0), user, pass))
-	router.GET("/", BasicAuth(fasthttp.FSHandler("./static", 0), user, pass))
-	router.POST("/", BasicAuth(webApp, user, pass))
-	router.NotFound = BasicAuth(fasthttp.FSHandler("./static", 0), user, pass)
+	router.GET("/js/", AuthRequired(fasthttp.FSHandler("./static/js/", 0)))
+	router.GET("/", AuthRequired(fasthttp.FSHandler("./static", 0)))
+	router.POST("/", AuthRequired(webApp))
+	router.NotFound = AuthRequired(fasthttp.FSHandler("./static", 0))
 
 	//router.GET("/hello/:name", Hello)
 

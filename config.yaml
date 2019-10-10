@@ -47,6 +47,18 @@ tableHeaders:
 #  - process_performance_data
 #  - obsess
 
+authentication:
+  kind: none
+  ad:
+    server: adserver.example.com
+    port: 389
+    baseDN: DC=example,DC=com
+    allowedGroups: 
+      - Domain Admins
+  basic:
+    credentials:
+      - admin:password
+
 instances:
   nagiosinstance01:
     uri: "https://nagioserver.example.com/nagios/"
