@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -141,11 +142,6 @@ func query(ctx *fasthttp.RequestCtx) {
 	fmt.Fprint(ctx, `],"type":"table"}]`)
 }
 
-/*
-func Hello(ctx *fasthttp.RequestCtx) {
-	fmt.Fprintf(ctx, "hello, %s!\n", ctx.UserValue("name"))
-}*/
-
 func search(ctx *fasthttp.RequestCtx) {
 	log.Println("/search: Hit")
 	ctx.Response.Header.Add("Content-Type", "application/json")
@@ -158,6 +154,31 @@ func annotation(ctx *fasthttp.RequestCtx) {
 
 func webApp(ctx *fasthttp.RequestCtx) {
 	log.Println("/: Hit")
+}
+
+func getSetting(ctx *fasthttp.RequestCtx) {
+	//viper.Get(ctx.UserValue("setting"))
+	userVal := ctx.UserValue("setting").(string)
+	//var settings []byte
+
+	//viper.UnmarshalKey(userVal, &settings, nil)
+	json, _ := json.Marshal(viper.Get(userVal))
+
+	ctx.Response.Header.Add("Content-Type", "application/json")
+	fmt.Fprint(ctx, string(json))
+	log.Println("/get/: Hit")
+}
+
+func setSetting(ctx *fasthttp.RequestCtx) {
+	//viper.Get(ctx.UserValue("setting"))
+	userVal := ctx.UserValue("setting").(string)
+	//var s []string
+	var s interface{}
+	json.Unmarshal(ctx.PostBody(), &s)
+	viper.Set(userVal, s)
+	reloadTableHeader()
+	//viper.Get("/set/: Hit")
+	log.Println("/set/: Hit")
 }
 
 func main() {
@@ -238,6 +259,8 @@ func main() {
 	router.GET("/api/query", query)
 	router.POST("/api/query", query)
 	router.GET("/api/annotations", annotation)
+	router.GET("/get/:setting", AuthRequired(getSetting))
+	router.POST("/set/:setting", AuthRequired(setSetting))
 	router.GET("/js/", AuthRequired(fasthttp.FSHandler("./static/js/", 0)))
 	router.GET("/", AuthRequired(fasthttp.FSHandler("./static", 0)))
 	router.POST("/", AuthRequired(webApp))
