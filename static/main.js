@@ -30,8 +30,11 @@ const SortableItem = {
   props: ['header'],
   template: `
   <li class="list-item">
-    <input type="checkbox" :id="header['name']+'chk'" :value="header['name']" v-model="header['enabled']" v-on:change="updateHeader($event, header)" >
-    <label v-bind:class="{strikethrough: !header['enabled'] }" >{{header['name']}}</label>
+    <input class="hidden-box" type="checkbox" :id="header['name']+'-chk'" :value="header['name']" v-model="header['enabled']" v-on:change="updateHeader($event, header)" >
+    <label class="check--label" :for="header['name']+'-chk'">
+      <span class="check--label-box"></span>
+      <span class="check--label-text">{{header['name']}}</span>
+    </label>
   </li>
     `,
     methods:{
@@ -50,7 +53,7 @@ const TablehHeaders = {
   name: 'TableHeaders',
   template: `
     <div class="root">
-      <SortableList lockAxis="y" v-model="headers" :headerchange="headerUpdate" @sort-end="orderUpdated">
+      <SortableList lockAxis="y" v-model="headers" :headerchange="headerUpdate" @sort-end="orderUpdated" :lockAxis="'xy'" :distance=5  :pressTreshold=10 >
         <SortableItem v-for="(header, index) in headers" :index="index" :key="header['name']" :header="header" @headerchange="headerUpdate"/>
       </SortableList>
     </div>
@@ -88,9 +91,15 @@ const TablehHeaders = {
               break;
             }
           }
-          let headers = this.headers.filter((e) => {return e.enabled}).map((v)=> {return v.name})
+          let enabledHeaders = this.headers.filter((e) => {return e.enabled}).map((v)=> {return v.name})
           //console.log(headers)
-          setData("tableHeaders", JSON.stringify(headers))
+          setData("tableHeaders", JSON.stringify(enabledHeaders))
+          
+          //Checked on top
+          let unchecked =  this.headers.filter((e)=>{return !e.enabled})
+          
+          this.headers = enabledHeaders.map((e)=>{return {name: e, enabled: true}}).concat(unchecked)
+          
 
         },
         orderUpdated: function(){

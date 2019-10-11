@@ -49,7 +49,8 @@ tableHeaders:
 #  - obsess
 
 authentication:
-  kind: none
+  kind: ad
+  enabled: true
   ad:
     server: adserver.example.com
     port: 389
