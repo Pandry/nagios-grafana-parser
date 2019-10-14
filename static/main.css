@@ -266,11 +266,13 @@ body {
 
 
 .hidden-box {
+  /*
 	position: absolute;
 	top: -9999px;
 	left: -9999px;
 	appearance: none;
-	opacity: 0;
+  opacity: 0;*/
+  display: none
 }
 
 .check--label {
